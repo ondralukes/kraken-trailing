@@ -1,0 +1,26 @@
+{
+  "name": "kraken-trailing",
+  "version": "1.0.0",
+  "description": "Script for placing trailing orders on Kraken exchange",
+  "main": "index.js",
+  "scripts": {
+    "install": "npx tsc",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ondralukes/kraken-trailing.git"
+  },
+  "author": "ondralukes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ondralukes/kraken-trailing/issues"
+  },
+  "homepage": "https://github.com/ondralukes/kraken-trailing#readme",
+  "dependencies": {
+    "@types/node": "^16.6.1",
+    "@types/qs": "^6.9.7",
+    "qs": "^6.10.1",
+    "typescript": "^4.3.5"
+  }
+}
