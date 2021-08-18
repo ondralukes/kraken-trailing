@@ -28,7 +28,12 @@ export class Order{
             if(currentRelative < this.relative*1.1) {
                 console.log(`Order #${this.txid} untouched: target ${(this.relative*100).toFixed(2)}%, now at ${(currentRelative*100).toFixed(2)}% ${this.currentPrice.toFixed(6)}EUR`);
             } else {
-                await api.cancelOrder(this.txid);
+                try {
+                    await api.cancelOrder(this.txid);
+                } catch (e){
+                    console.log(`Failed to cancel order #${this.txid}. Skipping update.`);
+                    return;
+                }
                 console.log(`Order #${this.txid} cancelled: target ${(this.relative*100).toFixed(2)}%, now at ${(currentRelative*100).toFixed(2)}% ${this.currentPrice.toFixed(6)}EUR`);
                 this.txid = null;
                 this.currentPrice = null;
@@ -37,8 +42,16 @@ export class Order{
         if(this.currentPrice === null && this.txid === null){
             const orderPrice = p + p*this.relative;
             const avolume = this.volume/orderPrice;
-            this.txid = await api.placeOrder(this.asset, avolume, orderPrice);
-            this.currentPrice = orderPrice;
+            try {
+                this.currentPrice = orderPrice;
+                this.txid = await api.placeOrder(this.asset, avolume, orderPrice);
+            } catch (e) {
+                console.log('Failed to place order.');
+                this.txid = null;
+                this.currentPrice = null;
+                return;
+            }
+
             console.log(`Placed order #${this.txid}: buy ${avolume.toFixed(6)}${this.asset} as stop-loss ${orderPrice.toFixed(6)}, ${(this.relative*100).toFixed(2)}% above current market price`);
         }
     }
