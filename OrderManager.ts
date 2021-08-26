@@ -12,6 +12,7 @@ export class OrderManager{
         this.save = save;
         this.api = api;
         this.orders = this.save.loadOrders();
+        this.start();
     }
     start(){
         this.running = true;
@@ -47,7 +48,7 @@ export class OrderManager{
         this.orders = this.orders.filter(o => {
             if(o.txid === null) return true;
             if(openOrders.indexOf(o.txid) === -1){
-                if(o.txid !== 'cancelled') console.log(`Order #${o.txid} lost or executed.`);
+                if(o.txid !== 'cancelled') console.log(`Order #${o.txid}(${o.asset}) lost or executed.`);
                 return false;
             }
             return true;

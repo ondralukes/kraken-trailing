@@ -1,9 +1,11 @@
 import * as fs from 'fs';
 import {Order} from "./Order";
+import path from "path";
 
 export class Save{
     apiKey: string;
     secretApiKey: Buffer;
+    ordersFilename: string;
     constructor() {
         if(!process.env.KRAKEN_API_KEY){
             console.log('API key not found. Please provide your API key in KRAKEN_API_KEY env.');
@@ -15,13 +17,19 @@ export class Save{
             process.exit(1);
         }
         this.secretApiKey = Buffer.from(process.env.KRAKEN_API_SECRET_KEY, 'base64');
+        if(!process.env.DATA_PATH){
+            this.ordersFilename = 'orders';
+        } else {
+            this.ordersFilename = path.join(process.env.DATA_PATH, 'orders');
+        }
+        console.log(`Storing orders in ${this.ordersFilename}`);
     }
 
     loadOrders(): Order[]{
-        if(!fs.existsSync('orders')){
+        if(!fs.existsSync(this.ordersFilename)){
             return [];
         }
-        const loaded = JSON.parse(fs.readFileSync('orders').toString());
+        const loaded = JSON.parse(fs.readFileSync(this.ordersFilename).toString());
         const orders: Order[] = [];
         for(const lo of loaded){
             const o = new Order(lo.asset, lo.volume, lo.relative);
@@ -34,6 +42,6 @@ export class Save{
     }
 
     saveOrders(orders: Order[]){
-        fs.writeFileSync('orders', JSON.stringify(orders));
+        fs.writeFileSync(this.ordersFilename, JSON.stringify(orders));
     }
 }

@@ -16,7 +16,7 @@ export class Order{
     async update(api: API){
         if(this.cancel){
             if(this.txid !== null){
-                console.log(`Order #${this.txid} cancelled`);
+                console.log(`Order #${this.txid}(${this.asset}) cancelled`);
                 await api.cancelOrder(this.txid);
             }
             this.txid = 'cancelled';
@@ -26,7 +26,7 @@ export class Order{
         if(this.currentPrice !== null && this.txid !== null){
             const currentRelative = this.currentPrice/p-1;
             if(currentRelative < this.relative*1.1) {
-                console.log(`Order #${this.txid} untouched: target ${(this.relative*100).toFixed(2)}%, now at ${(currentRelative*100).toFixed(2)}% ${this.currentPrice.toFixed(6)}EUR`);
+                console.log(`Order #${this.txid}(${this.asset}) untouched: target ${(this.relative*100).toFixed(2)}%, now at ${this.currentPrice.toFixed(6)}EUR (${(currentRelative*100).toFixed(2)}% above current market price ${p.toFixed(6)}EUR)`);
             } else {
                 try {
                     await api.cancelOrder(this.txid);
@@ -34,7 +34,7 @@ export class Order{
                     console.log(`Failed to cancel order #${this.txid}. Skipping update.`);
                     return;
                 }
-                console.log(`Order #${this.txid} cancelled: target ${(this.relative*100).toFixed(2)}%, now at ${(currentRelative*100).toFixed(2)}% ${this.currentPrice.toFixed(6)}EUR`);
+                console.log(`Order #${this.txid}(${this.asset}) cancelled: target ${(this.relative*100).toFixed(2)}%, now at ${this.currentPrice.toFixed(6)}EUR (${(currentRelative*100).toFixed(2)}% above current market price ${p.toFixed(6)}EUR)`);
                 this.txid = null;
                 this.currentPrice = null;
             }
@@ -52,7 +52,7 @@ export class Order{
                 return;
             }
 
-            console.log(`Placed order #${this.txid}: buy ${avolume.toFixed(6)}${this.asset} as stop-loss ${orderPrice.toFixed(6)}, ${(this.relative*100).toFixed(2)}% above current market price`);
+            console.log(`Placed order #${this.txid}: buy ${avolume.toFixed(6)}${this.asset} at stop-loss ${orderPrice.toFixed(6)}, ${(this.relative*100).toFixed(2)}% above current market price ${p.toFixed(6)}EUR`);
         }
     }
 }

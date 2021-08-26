@@ -1,0 +1,13 @@
+version: '3'
+services:
+  kraken-trailing:
+    container_name: kraken-trailing
+    stdin_open: true
+    tty: true
+    build: .
+    environment:
+      - KRAKEN_API_KEY
+      - KRAKEN_API_SECRET_KEY
+      - DATA_PATH=/data
+    volumes:
+      - /data
